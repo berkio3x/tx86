@@ -143,8 +143,15 @@ var debugArea_1 = require("./debugArea");
 
 var bytesInARow = 16;
 
+function getHex(Int) {
+  var hex = Int.toString(16);
+  var paddedHex = ('00' + hex).slice(-2);
+  return paddedHex;
+}
+
 function readELFFile(file) {
   var view = new Uint8Array(file);
+  var dv = new DataView(file);
   var debugDiv = debugArea_1.getDebugArea();
   var byteCount = 0;
   var row = document.createElement('div');
@@ -164,7 +171,19 @@ function readELFFile(file) {
     span.innerHTML = paddedHex;
     row.appendChild(span);
     byteCount++;
-  }
+  } // check magic elf header
+
+
+  console.assert(["7f", "45", "4c", "46"].toString() === [0x00, 0x01, 0x02, 0x03].map(function (byte) {
+    return dv.getUint8(byte);
+  }).map(function (int) {
+    return getHex(int);
+  }).toString(), "Invalid ELF header");
+  console.log([0x00, 0x01, 0x02, 0x03].map(function (byte) {
+    return dv.getUint8(byte);
+  }).map(function (int) {
+    return getHex(int);
+  }));
 }
 
 exports.readELFFile = readELFFile;
@@ -222,7 +241,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44743" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39531" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
